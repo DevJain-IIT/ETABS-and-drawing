@@ -115,26 +115,11 @@ function InspectorPanel({
     );
   }
 
-  // Determine if clicked column is a GFC or ETABS column
-  const isGfc = contract.gfc_cols.some((c) => c.id === colId);
-  const isEtabs = contract.etabs_cols.some((c) => c.id === colId);
-
-  // Resolve GFC ↔ ETABS pairing
-  let gfcId: string | null = null;
-  let etabsId: string | null = null;
-  let cmark: string | null = null;
-
-  if (isGfc) {
-    gfcId = colId;
-    const row = match?.matchResult.find((r) => r.gfc_id === colId);
-    etabsId = row?.etabs_id ?? null;
-  } else if (isEtabs) {
-    etabsId = colId;
-    const row = match?.matchResult.find((r) => r.etabs_id === colId);
-    gfcId = row?.gfc_id ?? null;
-  }
-  if (gfcId) cmark = contract.gfc_cmark?.[gfcId] ?? null;
-
+  // inspectedId is always a GFC col ID; resolve ETABS from match
+  const gfcId: string = colId;
+  const matchRow = match?.matchResult.find((r) => r.gfc_id === gfcId);
+  const etabsId: string | null = matchRow?.etabs_id ?? null;
+  const cmark: string | null = contract.gfc_cmark?.[gfcId] ?? null;
   const etabsCol = etabsId ? contract.etabs_cols.find((c) => c.id === etabsId) : null;
 
   // Beams for this ETABS column
@@ -193,23 +178,24 @@ function InspectorPanel({
       <div style={{ overflowY: 'auto', flex: 1 }}>
         {/* Column identity header */}
         <div style={{ padding: '14px 16px', borderBottom: `1px solid ${T.borderD}` }}>
-          <div style={{ fontFamily: T.serif, fontSize: 16, color: T.cyan, marginBottom: 2 }}>
-            {cmark ?? gfcId ?? etabsId ?? colId}
+          <div style={{ fontFamily: T.serif, fontSize: 17, color: T.cyan, marginBottom: 4 }}>
+            {cmark ?? gfcId}
           </div>
-          <div style={{ fontFamily: T.mono, fontSize: 10, color: 'rgba(255,255,255,0.35)' }}>
-            {isGfc ? `Drawing: ${gfcId}` : `ETABS: ${etabsId}`}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+            <div style={{ fontFamily: T.mono, fontSize: 11, color: 'rgba(255,255,255,0.5)' }}>
+              <span style={{ color: 'rgba(255,255,255,0.3)' }}>Drawing  </span>{gfcId}
+            </div>
+            <div style={{ fontFamily: T.mono, fontSize: 11, color: etabsId ? 'rgba(255,255,255,0.5)' : '#E08A00' }}>
+              <span style={{ color: 'rgba(255,255,255,0.3)' }}>ETABS    </span>
+              {etabsId ?? 'unmatched'}
+            </div>
+            {etabsCol && (
+              <div style={{ fontFamily: T.mono, fontSize: 11, color: 'rgba(255,255,255,0.4)' }}>
+                <span style={{ color: 'rgba(255,255,255,0.3)' }}>Section  </span>
+                {etabsCol.sec || '—'} · {etabsCol.B}×{etabsCol.D} mm
+              </div>
+            )}
           </div>
-        </div>
-
-        {/* Column pair info */}
-        <div style={{ padding: '12px 16px', borderBottom: `1px solid ${T.borderD}` }}>
-          <div style={{ fontFamily: T.mono, fontSize: 10, letterSpacing: '0.1em', color: 'rgba(255,255,255,0.3)', marginBottom: 8 }}>
-            COLUMN PAIRING
-          </div>
-          {row2('Drawing', gfcId ? <span style={{ color: '#22D3EE' }}>{gfcId}{cmark ? ` (${cmark})` : ''}</span> : <span style={{ color: '#E08A00' }}>unmatched</span>)}
-          {row2('ETABS', etabsId ? <span style={{ color: '#22D3EE' }}>{etabsId}</span> : <span style={{ color: '#E08A00' }}>unmatched</span>)}
-          {etabsCol && row2('Section', etabsCol.sec || '—')}
-          {etabsCol && row2('B × D', `${etabsCol.B} × ${etabsCol.D} mm`)}
         </div>
 
         {/* Beams connected to this column */}
@@ -297,9 +283,11 @@ export default function RosettaPage({ params }: { params: { id: string } }) {
   const [beamOverrides, setBeamOverrides] = React.useState<Record<string, 'verified' | 'missing' | 'extra'>>({});
   const [log, setLog] = React.useState<string[]>([]);
   const [err, setErr] = React.useState<string | null>(null);
+  // inspectedId is always a GFC col ID (or null). Inspector resolves ETABS from match.
   const [inspectedId, setInspectedId] = React.useState<string | null>(null);
   const [gfcScale, setGfcScale] = React.useState(1);
   const [etabsScale, setEtabsScale] = React.useState(1);
+  const [floorAlpha, setFloorAlpha] = React.useState(0.85);
 
   const gfcRef  = React.useRef<HTMLCanvasElement>(null);
   const etabsRef = React.useRef<HTMLCanvasElement>(null);
@@ -339,22 +327,20 @@ export default function RosettaPage({ params }: { params: { id: string } }) {
     }).catch((e) => { setErr(String(e)); addLog(`Error: ${String(e)}`); });
   }, [projectId, addLog]);
 
-  // Fit views once contract is ready
+  // Fit views once contract is ready (runs once, no gfcBitmap dependency)
   React.useEffect(() => {
     if (!contract) return;
-    if (gfcBitmap) {
-      const pts = contract.gfc_cols.map((c) => ({ x: c.cx, y: c.cy }));
-      if (pts.length) {
-        gfcView.current = fitCloud(pts, CW, CH, false);
-        setGfcScale(gfcView.current.scale);
-      }
+    const gpts = contract.gfc_cols.map((c) => ({ x: c.cx, y: c.cy }));
+    if (gpts.length) {
+      gfcView.current = fitCloud(gpts, CW, CH, false);
+      setGfcScale(gfcView.current.scale);
     }
     const epts = contract.etabs_cols.map((c) => ({ x: c.x, y: c.y }));
     if (epts.length) {
       etabsView.current = fitCloud(epts, CW, CH, true);
       setEtabsScale(etabsView.current.scale);
     }
-  }, [contract, gfcBitmap]);
+  }, [contract]);
 
   // Draw function
   const draw = React.useCallback(() => {
@@ -363,13 +349,19 @@ export default function RosettaPage({ params }: { params: { id: string } }) {
     const e = etabsRef.current?.getContext('2d');
     const gv = gfcView.current, ev = etabsView.current;
 
+    // Resolve selected ETABS id for cross-highlighting on ETABS canvas
+    const selectedEtabsId = inspectedId
+      ? (match?.matchResult.find((r) => r.gfc_id === inspectedId)?.etabs_id ?? null)
+      : null;
+
     // --- GFC canvas ---
     if (g) {
       g.clearRect(0, 0, CW, CH);
+      g.fillStyle = '#f8f9fa'; g.fillRect(0, 0, CW, CH);
       // PDF background
-      if (gfcBitmap) {
+      if (gfcBitmap && floorAlpha > 0) {
         g.save();
-        g.globalAlpha = 0.85;
+        g.globalAlpha = floorAlpha;
         g.drawImage(gfcBitmap.bitmap, 0, 0, gfcBitmap.bitmap.width, gfcBitmap.bitmap.height,
           gv.ox, gv.oy, gfcBitmap.pageW * gv.scale, gfcBitmap.pageH * gv.scale);
         g.restore();
@@ -411,7 +403,7 @@ export default function RosettaPage({ params }: { params: { id: string } }) {
     // --- ETABS canvas ---
     if (e) {
       renderETABS(e, ev, contract, match, CW, CH, {
-        selected: inspectedId ?? undefined, affine: affine ?? undefined,
+        selected: selectedEtabsId ?? undefined, affine: affine ?? undefined,
       });
       // Overlay beam lines in ETABS space
       if (beamMatch) {
@@ -430,7 +422,7 @@ export default function RosettaPage({ params }: { params: { id: string } }) {
         }
       }
     }
-  }, [contract, match, affine, beamMatch, beamOverrides, inspectedId, gfcBitmap]);
+  }, [contract, match, affine, beamMatch, beamOverrides, inspectedId, gfcBitmap, floorAlpha]);
 
   React.useEffect(() => { draw(); });
 
@@ -504,10 +496,11 @@ export default function RosettaPage({ params }: { params: { id: string } }) {
       const dist = Math.hypot(c.x - pt.x, c.y - pt.y);
       if (dist < bd) { bd = dist; best = c.id; }
     }
-    // Also sync: if ETABS col clicked, cross-highlight its matching GFC col
+    // Clicking ETABS side: resolve to the GFC id so inspector works uniformly
     if (best) {
       const gfcRow = match?.matchResult.find((r) => r.etabs_id === best);
-      setInspectedId(gfcRow?.gfc_id ?? best);
+      // If a GFC match exists, use that; otherwise leave inspector empty
+      setInspectedId(gfcRow?.gfc_id ?? null);
     } else {
       setInspectedId(null);
     }
@@ -566,9 +559,16 @@ export default function RosettaPage({ params }: { params: { id: string } }) {
           {/* GFC pane */}
           <div style={{ flex: 1, display: 'flex', flexDirection: 'column', borderRight: `1px solid ${T.border}` }}>
             <div style={{ padding: '6px 12px', background: T.panel, borderBottom: `1px solid ${T.border}`,
-              fontFamily: T.sans, fontSize: 12, color: T.muted, display: 'flex', justifyContent: 'space-between' }}>
-              <span>Ground floor arrangement</span>
-              <span style={{ fontFamily: T.mono, fontSize: 11 }}>scroll = zoom · drag = pan</span>
+              fontFamily: T.sans, fontSize: 12, color: T.muted, display: 'flex', alignItems: 'center', gap: 12 }}>
+              <span style={{ flexShrink: 0 }}>Ground floor arrangement</span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginLeft: 'auto' }}>
+                <span style={{ fontFamily: T.mono, fontSize: 11, flexShrink: 0 }}>PDF</span>
+                <input type="range" min={0} max={1} step={0.05} value={floorAlpha}
+                  onChange={(ev) => setFloorAlpha(Number(ev.target.value))}
+                  style={{ width: 72, accentColor: T.cyan, cursor: 'pointer' }} />
+                <span style={{ fontFamily: T.mono, fontSize: 11, minWidth: 30 }}>{Math.round(floorAlpha * 100)}%</span>
+              </div>
+              <span style={{ fontFamily: T.mono, fontSize: 11, flexShrink: 0 }}>scroll = zoom · drag = pan</span>
             </div>
             <canvas ref={gfcRef} width={CW} height={CH} style={{ width: '100%', cursor: 'crosshair', display: 'block' }}
               onMouseDown={onGfcMouseDown} onMouseMove={onGfcMouseMove} onMouseUp={onGfcMouseUp} onMouseLeave={() => { gfcDrag.current = null; }} />
