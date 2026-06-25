@@ -20,6 +20,7 @@ export default function MapperPage({ params }: { params: { id: string } }) {
   const [contract, setContract] = React.useState<Contract | null>(null);
   const [match, setMatch] = React.useState<MatchOutput | null>(null);
   const [overrides, setOverrides] = React.useState<Record<string, string | null>>({});
+  const [dismissedCols, setDismissedCols] = React.useState<Set<string>>(new Set());
   const [affine, setAffine] = React.useState<Affine | null>(null);
   const [selected, setSelected] = React.useState<string | null>(null);
   const [err, setErr] = React.useState<string | null>(null);
@@ -96,8 +97,8 @@ export default function MapperPage({ params }: { params: { id: string } }) {
         ctx.restore();
       }
 
-      // GFC columns as green outlined boxes with names
-      for (const c of contract.gfc_cols) {
+      // GFC columns as green outlined boxes with names (skip dismissed false detections)
+      for (const c of contract.gfc_cols.filter((c) => !dismissedCols.has(c.id))) {
         const p = { x: c.cx * v.scale + v.ox, y: c.cy * v.scale + v.oy };
         const hw = Math.max(4, (c.rw / 2) * v.scale);
         const hh = Math.max(4, (c.rh / 2) * v.scale);
@@ -125,7 +126,7 @@ export default function MapperPage({ params }: { params: { id: string } }) {
     if (e) renderETABS(e.getContext('2d')!, etabsView.current, contract, match, CW, CH,
       { selected, beamMatch: bm, affine, calibPts: etabsPts,
         ghosts: affine ? contract.gfc_cols : undefined });
-  }, [contract, match, selected, gfcPts, etabsPts, affine, pdfBitmap, floorAlpha]);
+  }, [contract, match, selected, gfcPts, etabsPts, affine, pdfBitmap, floorAlpha, dismissedCols]);
   React.useEffect(() => { draw(); });
 
   // ---- Apply calibration: 3-pt affine seed -> ICP refine ----
@@ -150,7 +151,7 @@ export default function MapperPage({ params }: { params: { id: string } }) {
   };
 
   const resetCalib = () => {
-    setGfcPts([]); setEtabsPts([]); setAffine(null); setMatch(null); setOverrides({});
+    setGfcPts([]); setEtabsPts([]); setAffine(null); setMatch(null); setOverrides({}); setDismissedCols(new Set());
     setSelected(null); setInspectedId(null); setInspectedSide('etabs');
     say('Calibration reset. Click 3 control points on the GFC drawing again.');
   };
@@ -173,6 +174,17 @@ export default function MapperPage({ params }: { params: { id: string } }) {
     say(`Override: ${gfcId} → ${newEtabsId ?? '(unmatched)'}`);
     // Persist to backend (non-fatal)
     api.saveResults(projectId, { step: 'hitl_overrides', overrides: { ...overrides, [gfcId]: newEtabsId } }).catch(() => {});
+  };
+
+  // HITL: mark a GFC detection as not a real column — remove from match result
+  const dismissCol = (gfcId: string) => {
+    setDismissedCols((prev) => new Set([...prev, gfcId]));
+    if (match) {
+      const updated = match.matchResult.filter((r) => r.gfc_id !== gfcId);
+      setMatch({ ...match, matchResult: updated });
+    }
+    setInspectedId(null);
+    say(`Dismissed: ${gfcId} marked as not a column`);
   };
 
   // ---- canvas pointer handlers (zoom / pan / pick) ----
@@ -257,7 +269,7 @@ export default function MapperPage({ params }: { params: { id: string } }) {
         <Toolbar
           calibMode={calibMode} hasMatch={!!match}
           onApply={applyCalibration} onMatch={runMatch} onReset={resetCalib}
-          counts={match?.counts}
+          counts={match?.counts} projectId={projectId}
         />
 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginTop: 14 }}>
@@ -289,6 +301,7 @@ export default function MapperPage({ params }: { params: { id: string } }) {
           match={match}
           log={log}
           onOverride={overrideMatch}
+          onDismiss={dismissCol}
         />
       )}
     </div>
@@ -348,9 +361,9 @@ function Header({ projectName }: { projectName?: string }) {
   );
 }
 
-function Toolbar({ calibMode, hasMatch, onApply, onMatch, onReset, counts }: {
+function Toolbar({ calibMode, hasMatch, onApply, onMatch, onReset, counts, projectId }: {
   calibMode: string; hasMatch: boolean; onApply: () => void; onMatch: () => void; onReset: () => void;
-  counts?: Record<string, number>;
+  counts?: Record<string, number>; projectId: string;
 }) {
   const btn = (label: string, on: () => void, enabled: boolean, primary = false): React.ReactNode => (
     <button onClick={on} disabled={!enabled} style={{ padding: '10px 18px', borderRadius: 10, border: primary ? 'none' : `1px solid ${T.border}`,
@@ -370,6 +383,15 @@ function Toolbar({ calibMode, hasMatch, onApply, onMatch, onReset, counts }: {
           <Stat label="walls" v={counts.WALL} color={TIER_COLORS.WALL} />
           <Stat label="not-drawn" v={counts.UNMATCHED_ETABS} color={TIER_COLORS.UNMATCHED_ETABS} />
         </div>
+      )}
+      {hasMatch && (
+        <Link href={`/project/${projectId}/rosetta`} style={{
+          marginLeft: 'auto', padding: '10px 20px', borderRadius: 10, background: '#0E9F6E',
+          color: '#fff', fontWeight: 700, fontSize: 14, fontFamily: T.sans, textDecoration: 'none',
+          display: 'inline-flex', alignItems: 'center', gap: 8,
+        }}>
+          Continue to Rosetta →
+        </Link>
       )}
     </div>
   );
@@ -554,13 +576,14 @@ function ReassignDropdown({ gfcId, currentEtabsId, etabsCols, onOverride, gfcCol
   );
 }
 
-function InspectorPanel({ colId, side, contract, match, log, onOverride }: {
+function InspectorPanel({ colId, side, contract, match, log, onOverride, onDismiss }: {
   colId: string | null;
   side: 'gfc' | 'etabs';
   contract: Contract;
   match: MatchOutput | null;
   log: string[];
   onOverride: (gfcId: string | null, newEtabsId: string | null) => void;
+  onDismiss: (gfcId: string) => void;
 }) {
   const logEndRef = React.useRef<HTMLDivElement>(null);
   React.useEffect(() => {
@@ -663,6 +686,20 @@ function InspectorPanel({ colId, side, contract, match, log, onOverride }: {
                 onOverride={onOverride}
               />
             )}
+            {/* Dismiss: engineer confirms this detection is NOT a real column */}
+            <div style={{ marginTop: 20, paddingTop: 16, borderTop: '1px solid rgba(255,255,255,0.08)' }}>
+              <button onClick={() => onDismiss(colId!)} style={{
+                width: '100%', padding: '9px 14px', borderRadius: 8, cursor: 'pointer',
+                background: 'rgba(225,29,72,0.10)', border: '1px solid rgba(225,29,72,0.30)',
+                color: '#F87171', fontFamily: T.mono, fontSize: 12, fontWeight: 600,
+              }}>
+                Not a column — remove from analysis
+              </button>
+              <div style={{ fontFamily: T.mono, fontSize: 10.5, color: 'rgba(255,255,255,0.2)', marginTop: 6, lineHeight: 1.5 }}>
+                Use this for false detections (lift symbols, doors, hatched walls).
+                The detection disappears from the canvas and review queue.
+              </div>
+            </div>
           </div>
         </div>
         {logFooter}
