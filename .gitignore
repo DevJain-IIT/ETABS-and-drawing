@@ -1,0 +1,37 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+env/
+*.egg-info/
+dist/
+build/
+
+# Node / Next.js
+node_modules/
+.next/
+out/
+.cache/
+
+# Local database and uploaded files (user data — not tracked)
+backend/civilspace.db
+backend/rosetta.db
+backend/*.db
+backend/uploads/
+backend/*.log
+backend/*.txt
+
+# Environment files with secrets
+.env.local
+.env*.local
+.env
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+*.swp

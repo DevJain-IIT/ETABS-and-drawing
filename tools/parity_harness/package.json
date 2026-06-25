@@ -1,0 +1,16 @@
+{
+  "name": "civilspace-parity-harness",
+  "version": "1.0.0",
+  "description": "",
+  "main": "engine_core.js",
+  "scripts": {
+    "oracle": "node make_oracle.js",
+    "gate": "node parity_gate.js",
+    "parity": "node make_oracle.js && node parity_gate.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "private": true
+}

@@ -1,0 +1,57 @@
+@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  padding: 0;
+  margin: 0;
+}
+
+/* Keyframes ported verbatim from Design/dbr/shared.jsx so animations match. */
+@keyframes dbr-pulse { 0% { transform: scale(1); opacity: 0.5; } 100% { transform: scale(2.6); opacity: 0; } }
+@keyframes dbr-fade-up { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes dbr-fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes dbr-badge-pop { 0% { opacity: 0; transform: scale(0.6); } 60% { transform: scale(1.08); } 100% { opacity: 1; transform: scale(1); } }
+@keyframes dbr-pop-in { 0% { opacity: 0; transform: scale(0.92) translateY(8px); } 100% { opacity: 1; transform: scale(1) translateY(0); } }
+@keyframes dbr-spin { to { transform: rotate(360deg); } }
+@keyframes dbr-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+@keyframes dbr-drawer { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes pulse2 { 0% { transform: scale(1); opacity: 0.5; } 100% { transform: scale(2.6); opacity: 0; } }
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; }
+}
+
+::selection { background: #22d3ee40; }
+
+.dbr-scroll::-webkit-scrollbar { width: 10px; height: 10px; }
+.dbr-scroll::-webkit-scrollbar-thumb { background: #d9d3c8; border-radius: 99px; border: 3px solid transparent; background-clip: content-box; }
+.dbr-scroll::-webkit-scrollbar-thumb:hover { background: #c4bdaf; background-clip: content-box; }
+
+/* Print: hide chrome, lay findings out cleanly for a reviewer PDF. */
+@media print {
+  @page { margin: 14mm 12mm; size: A4; }
+  .no-print { display: none !important; }
+  .print-only { display: block !important; }
+  body { background: #fff !important; }
+  /* Don't split a finding card across pages. */
+  .print-finding { break-inside: avoid; page-break-inside: avoid; box-shadow: none !important; }
+  /* Sections start cleanly. */
+  .print-section { break-inside: avoid-page; }
+  /* Strip heavy shadows/animations in print. */
+  * { animation: none !important; box-shadow: none !important; }
+}
+.print-only { display: none; }

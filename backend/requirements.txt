@@ -1,0 +1,9 @@
+fastapi>=0.110
+uvicorn[standard]>=0.29
+pydantic>=2.6
+python-multipart>=0.0.9
+pymupdf>=1.24
+# Supabase (production). When these + SUPABASE_* env vars are absent, the
+# backend falls back to local SQLite + disk, so they are optional for local dev.
+supabase>=2.4
+psycopg[binary]>=3.1

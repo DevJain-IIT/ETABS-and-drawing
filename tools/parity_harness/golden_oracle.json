@@ -1,0 +1,1913 @@
+{
+ "source": "sample_gwalior_contract.json",
+ "gfc_count": 189,
+ "etabs_count": 190,
+ "wall_count": 24,
+ "seed_mean_residual": 373.62,
+ "anisotropy": 1,
+ "counts": {
+  "HIGH": 160,
+  "MED": 26,
+  "LOW": 1,
+  "WALL": 2,
+  "UNMATCHED_ETABS": 4
+ },
+ "matches": [
+  {
+   "gfc_id": "GFC_100",
+   "etabs_id": "C46",
+   "confidence": "HIGH",
+   "dist": 47,
+   "ratio": 0.01,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_101",
+   "etabs_id": "C24",
+   "confidence": "HIGH",
+   "dist": 200,
+   "ratio": 0.07,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_102",
+   "etabs_id": "C134",
+   "confidence": "HIGH",
+   "dist": 316,
+   "ratio": 0.08,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_103",
+   "etabs_id": "C133",
+   "confidence": "HIGH",
+   "dist": 260,
+   "ratio": 0.08,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_104",
+   "etabs_id": "C61",
+   "confidence": "HIGH",
+   "dist": 228,
+   "ratio": 0.04,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_105",
+   "etabs_id": "C59",
+   "confidence": "HIGH",
+   "dist": 231,
+   "ratio": 0.04,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_106",
+   "etabs_id": "C58",
+   "confidence": "HIGH",
+   "dist": 185,
+   "ratio": 0.05,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_107",
+   "etabs_id": "C49",
+   "confidence": "HIGH",
+   "dist": 233,
+   "ratio": 0.03,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_108",
+   "etabs_id": "C48",
+   "confidence": "HIGH",
+   "dist": 200,
+   "ratio": 0.06,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_109",
+   "etabs_id": "C33",
+   "confidence": "HIGH",
+   "dist": 243,
+   "ratio": 0.07,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_11",
+   "etabs_id": null,
+   "confidence": "WALL",
+   "dist": 87122,
+   "ratio": 13.82,
+   "mutual": false,
+   "posdev": false,
+   "pier": "SW6"
+  },
+  {
+   "gfc_id": "GFC_110",
+   "etabs_id": "C63",
+   "confidence": "HIGH",
+   "dist": 228,
+   "ratio": 0.04,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_111",
+   "etabs_id": "C62",
+   "confidence": "HIGH",
+   "dist": 161,
+   "ratio": 0.04,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_112",
+   "etabs_id": "C25",
+   "confidence": "HIGH",
+   "dist": 282,
+   "ratio": 0.08,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_113",
+   "etabs_id": "C45",
+   "confidence": "HIGH",
+   "dist": 241,
+   "ratio": 0.06,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_114",
+   "etabs_id": "C44",
+   "confidence": "HIGH",
+   "dist": 88,
+   "ratio": 0.02,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_115",
+   "etabs_id": "C100",
+   "confidence": "HIGH",
+   "dist": 114,
+   "ratio": 0.04,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_116",
+   "etabs_id": "C30",
+   "confidence": "HIGH",
+   "dist": 259,
+   "ratio": 0.06,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_117",
+   "etabs_id": "C32",
+   "confidence": "HIGH",
+   "dist": 294,
+   "ratio": 0.09,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_118",
+   "etabs_id": "C54",
+   "confidence": "HIGH",
+   "dist": 205,
+   "ratio": 0.06,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_119",
+   "etabs_id": "C56",
+   "confidence": "HIGH",
+   "dist": 356,
+   "ratio": 0.11,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_12",
+   "etabs_id": null,
+   "confidence": "WALL",
+   "dist": 81135,
+   "ratio": 14.65,
+   "mutual": false,
+   "posdev": false,
+   "pier": "SW6"
+  },
+  {
+   "gfc_id": "GFC_120",
+   "etabs_id": "C47",
+   "confidence": "HIGH",
+   "dist": 192,
+   "ratio": 0.06,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_121",
+   "etabs_id": "C27",
+   "confidence": "HIGH",
+   "dist": 354,
+   "ratio": 0.1,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_122",
+   "etabs_id": "C52",
+   "confidence": "HIGH",
+   "dist": 198,
+   "ratio": 0.06,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_123",
+   "etabs_id": "C51",
+   "confidence": "HIGH",
+   "dist": 179,
+   "ratio": 0.05,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_124",
+   "etabs_id": "C53",
+   "confidence": "HIGH",
+   "dist": 196,
+   "ratio": 0.06,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_125",
+   "etabs_id": "C103",
+   "confidence": "HIGH",
+   "dist": 70,
+   "ratio": 0.02,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_126",
+   "etabs_id": "C57",
+   "confidence": "HIGH",
+   "dist": 547,
+   "ratio": 0.16,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_127",
+   "etabs_id": "C463",
+   "confidence": "MED",
+   "dist": 772,
+   "ratio": 0.22,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_128",
+   "etabs_id": "C461",
+   "confidence": "MED",
+   "dist": 883,
+   "ratio": 0.28,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_129",
+   "etabs_id": "C459",
+   "confidence": "MED",
+   "dist": 854,
+   "ratio": 0.25,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_13",
+   "etabs_id": null,
+   "confidence": "LOW",
+   "dist": 75282,
+   "ratio": 14.08,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_130",
+   "etabs_id": "C441",
+   "confidence": "HIGH",
+   "dist": 590,
+   "ratio": 0.16,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_131",
+   "etabs_id": "C438",
+   "confidence": "HIGH",
+   "dist": 536,
+   "ratio": 0.16,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_132",
+   "etabs_id": "C440",
+   "confidence": "HIGH",
+   "dist": 360,
+   "ratio": 0.1,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_133",
+   "etabs_id": "C437",
+   "confidence": "HIGH",
+   "dist": 330,
+   "ratio": 0.1,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_134",
+   "etabs_id": "C428",
+   "confidence": "HIGH",
+   "dist": 99,
+   "ratio": 0.03,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_135",
+   "etabs_id": "C442",
+   "confidence": "HIGH",
+   "dist": 58,
+   "ratio": 0.02,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_136",
+   "etabs_id": "C462",
+   "confidence": "HIGH",
+   "dist": 337,
+   "ratio": 0.1,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_137",
+   "etabs_id": "C432",
+   "confidence": "HIGH",
+   "dist": 316,
+   "ratio": 0.09,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_138",
+   "etabs_id": "C434",
+   "confidence": "HIGH",
+   "dist": 361,
+   "ratio": 0.1,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_139",
+   "etabs_id": "C55",
+   "confidence": "HIGH",
+   "dist": 319,
+   "ratio": 0.1,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_140",
+   "etabs_id": "C26",
+   "confidence": "HIGH",
+   "dist": 315,
+   "ratio": 0.09,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_141",
+   "etabs_id": "C3",
+   "confidence": "HIGH",
+   "dist": 79,
+   "ratio": 0.02,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_142",
+   "etabs_id": "C171",
+   "confidence": "HIGH",
+   "dist": 85,
+   "ratio": 0.03,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_143",
+   "etabs_id": "C173",
+   "confidence": "HIGH",
+   "dist": 48,
+   "ratio": 0.02,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_144",
+   "etabs_id": "C172",
+   "confidence": "HIGH",
+   "dist": 51,
+   "ratio": 0.02,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_145",
+   "etabs_id": "C174",
+   "confidence": "HIGH",
+   "dist": 171,
+   "ratio": 0.07,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_146",
+   "etabs_id": "C176",
+   "confidence": "HIGH",
+   "dist": 157,
+   "ratio": 0.08,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_147",
+   "etabs_id": "C175",
+   "confidence": "HIGH",
+   "dist": 157,
+   "ratio": 0.06,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_148",
+   "etabs_id": "C177",
+   "confidence": "MED",
+   "dist": 271,
+   "ratio": null,
+   "mutual": true,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_149",
+   "etabs_id": "C179",
+   "confidence": "HIGH",
+   "dist": 266,
+   "ratio": 0.09,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_150",
+   "etabs_id": "C178",
+   "confidence": "HIGH",
+   "dist": 264,
+   "ratio": 0.11,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_151",
+   "etabs_id": "C180",
+   "confidence": "MED",
+   "dist": 383,
+   "ratio": null,
+   "mutual": true,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_152",
+   "etabs_id": "C182",
+   "confidence": "HIGH",
+   "dist": 375,
+   "ratio": 0.13,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_153",
+   "etabs_id": "C181",
+   "confidence": "MED",
+   "dist": 373,
+   "ratio": null,
+   "mutual": true,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_154",
+   "etabs_id": "C183",
+   "confidence": "MED",
+   "dist": 492,
+   "ratio": null,
+   "mutual": true,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_155",
+   "etabs_id": "C185",
+   "confidence": "MED",
+   "dist": 489,
+   "ratio": null,
+   "mutual": true,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_156",
+   "etabs_id": "C184",
+   "confidence": "MED",
+   "dist": 488,
+   "ratio": null,
+   "mutual": true,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_157",
+   "etabs_id": "C186",
+   "confidence": "MED",
+   "dist": 554,
+   "ratio": null,
+   "mutual": true,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_158",
+   "etabs_id": "C188",
+   "confidence": "MED",
+   "dist": 547,
+   "ratio": null,
+   "mutual": true,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_159",
+   "etabs_id": "C187",
+   "confidence": "MED",
+   "dist": 551,
+   "ratio": null,
+   "mutual": true,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_160",
+   "etabs_id": "C60",
+   "confidence": "HIGH",
+   "dist": 113,
+   "ratio": 0.03,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_161",
+   "etabs_id": "C31",
+   "confidence": "HIGH",
+   "dist": 289,
+   "ratio": 0.09,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_162",
+   "etabs_id": "C50",
+   "confidence": "HIGH",
+   "dist": 176,
+   "ratio": 0.05,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_163",
+   "etabs_id": "C88",
+   "confidence": "HIGH",
+   "dist": 167,
+   "ratio": 0.05,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_164",
+   "etabs_id": "C115",
+   "confidence": "HIGH",
+   "dist": 363,
+   "ratio": 0.11,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_165",
+   "etabs_id": "C87",
+   "confidence": "HIGH",
+   "dist": 178,
+   "ratio": 0.05,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_166",
+   "etabs_id": "C80",
+   "confidence": "MED",
+   "dist": 543,
+   "ratio": 0.15,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_167",
+   "etabs_id": "C109",
+   "confidence": "HIGH",
+   "dist": 303,
+   "ratio": 0.09,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_168",
+   "etabs_id": "C436",
+   "confidence": "MED",
+   "dist": 736,
+   "ratio": 0.2,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_169",
+   "etabs_id": "C435",
+   "confidence": "MED",
+   "dist": 783,
+   "ratio": 0.29,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_170",
+   "etabs_id": "C465",
+   "confidence": "HIGH",
+   "dist": 404,
+   "ratio": 0.13,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_171",
+   "etabs_id": "C91",
+   "confidence": "HIGH",
+   "dist": 110,
+   "ratio": 0.02,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_172",
+   "etabs_id": "C42",
+   "confidence": "HIGH",
+   "dist": 60,
+   "ratio": 0.02,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_173",
+   "etabs_id": "C40",
+   "confidence": "HIGH",
+   "dist": 62,
+   "ratio": 0.02,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_174",
+   "etabs_id": "C43",
+   "confidence": "HIGH",
+   "dist": 81,
+   "ratio": 0.02,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_175",
+   "etabs_id": "C41",
+   "confidence": "HIGH",
+   "dist": 93,
+   "ratio": 0.02,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_176",
+   "etabs_id": "C39",
+   "confidence": "HIGH",
+   "dist": 101,
+   "ratio": 0.02,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_177",
+   "etabs_id": "C37",
+   "confidence": "HIGH",
+   "dist": 113,
+   "ratio": 0.02,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_178",
+   "etabs_id": "C35",
+   "confidence": "HIGH",
+   "dist": 129,
+   "ratio": 0.02,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_179",
+   "etabs_id": "C38",
+   "confidence": "HIGH",
+   "dist": 74,
+   "ratio": 0.02,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_180",
+   "etabs_id": "C36",
+   "confidence": "HIGH",
+   "dist": 90,
+   "ratio": 0.02,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_181",
+   "etabs_id": "C19",
+   "confidence": "HIGH",
+   "dist": 283,
+   "ratio": 0.05,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_182",
+   "etabs_id": "C130",
+   "confidence": "HIGH",
+   "dist": 297,
+   "ratio": 0.08,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_183",
+   "etabs_id": "C17",
+   "confidence": "HIGH",
+   "dist": 46,
+   "ratio": 0.01,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_184",
+   "etabs_id": "C129",
+   "confidence": "HIGH",
+   "dist": 88,
+   "ratio": 0.03,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_185",
+   "etabs_id": "C83",
+   "confidence": "HIGH",
+   "dist": 273,
+   "ratio": 0.08,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_186",
+   "etabs_id": "C84",
+   "confidence": "HIGH",
+   "dist": 300,
+   "ratio": 0.06,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_187",
+   "etabs_id": "C77",
+   "confidence": "HIGH",
+   "dist": 128,
+   "ratio": 0.03,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_188",
+   "etabs_id": "C75",
+   "confidence": "HIGH",
+   "dist": 120,
+   "ratio": 0.02,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_189",
+   "etabs_id": "C73",
+   "confidence": "HIGH",
+   "dist": 111,
+   "ratio": 0.02,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_190",
+   "etabs_id": "C71",
+   "confidence": "HIGH",
+   "dist": 106,
+   "ratio": 0.03,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_191",
+   "etabs_id": "C69",
+   "confidence": "HIGH",
+   "dist": 211,
+   "ratio": 0.05,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_192",
+   "etabs_id": "C81",
+   "confidence": "HIGH",
+   "dist": 84,
+   "ratio": 0.02,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_193",
+   "etabs_id": "C82",
+   "confidence": "HIGH",
+   "dist": 152,
+   "ratio": 0.03,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_194",
+   "etabs_id": "C114",
+   "confidence": "HIGH",
+   "dist": 304,
+   "ratio": 0.1,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_195",
+   "etabs_id": "C411",
+   "confidence": "HIGH",
+   "dist": 218,
+   "ratio": 0.06,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_196",
+   "etabs_id": "C410",
+   "confidence": "HIGH",
+   "dist": 170,
+   "ratio": 0.03,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_197",
+   "etabs_id": "C107",
+   "confidence": "HIGH",
+   "dist": 33,
+   "ratio": 0.01,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_198",
+   "etabs_id": "C409",
+   "confidence": "HIGH",
+   "dist": 100,
+   "ratio": 0.03,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_199",
+   "etabs_id": "C2",
+   "confidence": "HIGH",
+   "dist": 275,
+   "ratio": 0.05,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_20",
+   "etabs_id": "C106",
+   "confidence": "HIGH",
+   "dist": 231,
+   "ratio": 0.05,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_200",
+   "etabs_id": "C451",
+   "confidence": "MED",
+   "dist": 555,
+   "ratio": 0.2,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_201",
+   "etabs_id": "C452",
+   "confidence": "MED",
+   "dist": 642,
+   "ratio": 0.28,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_202",
+   "etabs_id": "C116",
+   "confidence": "MED",
+   "dist": 819,
+   "ratio": 0.21,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_203",
+   "etabs_id": "C122",
+   "confidence": "MED",
+   "dist": 636,
+   "ratio": 0.18,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_204",
+   "etabs_id": "C119",
+   "confidence": "MED",
+   "dist": 952,
+   "ratio": 0.24,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_205",
+   "etabs_id": "C464",
+   "confidence": "HIGH",
+   "dist": 479,
+   "ratio": 0.15,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_21",
+   "etabs_id": "C108",
+   "confidence": "HIGH",
+   "dist": 206,
+   "ratio": 0.05,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_22",
+   "etabs_id": "C105",
+   "confidence": "HIGH",
+   "dist": 289,
+   "ratio": 0.05,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_23",
+   "etabs_id": "C101",
+   "confidence": "HIGH",
+   "dist": 341,
+   "ratio": 0.09,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_24",
+   "etabs_id": "C13",
+   "confidence": "HIGH",
+   "dist": 387,
+   "ratio": 0.11,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_25",
+   "etabs_id": "C104",
+   "confidence": "HIGH",
+   "dist": 314,
+   "ratio": 0.08,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_26",
+   "etabs_id": "C111",
+   "confidence": "HIGH",
+   "dist": 321,
+   "ratio": 0.07,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_27",
+   "etabs_id": "C113",
+   "confidence": "HIGH",
+   "dist": 254,
+   "ratio": 0.06,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_28",
+   "etabs_id": "C102",
+   "confidence": "HIGH",
+   "dist": 141,
+   "ratio": 0.03,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_29",
+   "etabs_id": "C4",
+   "confidence": "HIGH",
+   "dist": 186,
+   "ratio": 0.04,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_30",
+   "etabs_id": "C99",
+   "confidence": "HIGH",
+   "dist": 285,
+   "ratio": 0.08,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_31",
+   "etabs_id": "C117",
+   "confidence": "MED",
+   "dist": 399,
+   "ratio": 0.17,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_32",
+   "etabs_id": "C98",
+   "confidence": "HIGH",
+   "dist": 317,
+   "ratio": 0.08,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_33",
+   "etabs_id": "C96",
+   "confidence": "HIGH",
+   "dist": 309,
+   "ratio": 0.1,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_34",
+   "etabs_id": "C94",
+   "confidence": "HIGH",
+   "dist": 299,
+   "ratio": 0.09,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_35",
+   "etabs_id": "C7",
+   "confidence": "HIGH",
+   "dist": 277,
+   "ratio": 0.05,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_36",
+   "etabs_id": "C97",
+   "confidence": "HIGH",
+   "dist": 137,
+   "ratio": 0.04,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_37",
+   "etabs_id": "C95",
+   "confidence": "HIGH",
+   "dist": 128,
+   "ratio": 0.03,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_38",
+   "etabs_id": "C5",
+   "confidence": "HIGH",
+   "dist": 90,
+   "ratio": 0.02,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_39",
+   "etabs_id": "C85",
+   "confidence": "HIGH",
+   "dist": 194,
+   "ratio": 0.06,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_40",
+   "etabs_id": "C8",
+   "confidence": "HIGH",
+   "dist": 109,
+   "ratio": 0.04,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_41",
+   "etabs_id": "C12",
+   "confidence": "HIGH",
+   "dist": 93,
+   "ratio": 0.03,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_42",
+   "etabs_id": "C15",
+   "confidence": "HIGH",
+   "dist": 88,
+   "ratio": 0.02,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_43",
+   "etabs_id": "C123",
+   "confidence": "HIGH",
+   "dist": 232,
+   "ratio": 0.05,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_44",
+   "etabs_id": "C128",
+   "confidence": "HIGH",
+   "dist": 223,
+   "ratio": 0.06,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_45",
+   "etabs_id": "C118",
+   "confidence": "HIGH",
+   "dist": 250,
+   "ratio": 0.07,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_46",
+   "etabs_id": "C10",
+   "confidence": "HIGH",
+   "dist": 78,
+   "ratio": 0.04,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_47",
+   "etabs_id": "C120",
+   "confidence": "HIGH",
+   "dist": 114,
+   "ratio": 0.03,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_48",
+   "etabs_id": "C92",
+   "confidence": "HIGH",
+   "dist": 289,
+   "ratio": 0.06,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_49",
+   "etabs_id": "C93",
+   "confidence": "HIGH",
+   "dist": 267,
+   "ratio": 0.07,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_50",
+   "etabs_id": "C421",
+   "confidence": "MED",
+   "dist": 624,
+   "ratio": 0.16,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_51",
+   "etabs_id": "C431",
+   "confidence": "HIGH",
+   "dist": 562,
+   "ratio": 0.11,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_52",
+   "etabs_id": "C430",
+   "confidence": "MED",
+   "dist": 778,
+   "ratio": 0.29,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_53",
+   "etabs_id": "C433",
+   "confidence": "HIGH",
+   "dist": 564,
+   "ratio": 0.14,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_54",
+   "etabs_id": "C418",
+   "confidence": "HIGH",
+   "dist": 318,
+   "ratio": 0.07,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_55",
+   "etabs_id": "C419",
+   "confidence": "HIGH",
+   "dist": 402,
+   "ratio": 0.1,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_56",
+   "etabs_id": "C416",
+   "confidence": "HIGH",
+   "dist": 247,
+   "ratio": 0.05,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_57",
+   "etabs_id": "C417",
+   "confidence": "HIGH",
+   "dist": 335,
+   "ratio": 0.09,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_58",
+   "etabs_id": "C414",
+   "confidence": "HIGH",
+   "dist": 314,
+   "ratio": 0.09,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_59",
+   "etabs_id": "C415",
+   "confidence": "HIGH",
+   "dist": 317,
+   "ratio": 0.09,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_60",
+   "etabs_id": "C412",
+   "confidence": "HIGH",
+   "dist": 92,
+   "ratio": 0.02,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_61",
+   "etabs_id": "C413",
+   "confidence": "HIGH",
+   "dist": 240,
+   "ratio": 0.07,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_62",
+   "etabs_id": "C423",
+   "confidence": "HIGH",
+   "dist": 118,
+   "ratio": 0.04,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_63",
+   "etabs_id": "C403",
+   "confidence": "HIGH",
+   "dist": 311,
+   "ratio": 0.11,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_64",
+   "etabs_id": "C426",
+   "confidence": "HIGH",
+   "dist": 135,
+   "ratio": 0.04,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_65",
+   "etabs_id": "C405",
+   "confidence": "HIGH",
+   "dist": 422,
+   "ratio": 0.08,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_66",
+   "etabs_id": "C427",
+   "confidence": "HIGH",
+   "dist": 216,
+   "ratio": 0.07,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_67",
+   "etabs_id": "C406",
+   "confidence": "HIGH",
+   "dist": 505,
+   "ratio": 0.08,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_68",
+   "etabs_id": "C425",
+   "confidence": "HIGH",
+   "dist": 41,
+   "ratio": 0.01,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_69",
+   "etabs_id": "C404",
+   "confidence": "HIGH",
+   "dist": 355,
+   "ratio": 0.12,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_70",
+   "etabs_id": "C424",
+   "confidence": "HIGH",
+   "dist": 69,
+   "ratio": 0.02,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_71",
+   "etabs_id": "C439",
+   "confidence": "HIGH",
+   "dist": 536,
+   "ratio": 0.18,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_72",
+   "etabs_id": "C429",
+   "confidence": "HIGH",
+   "dist": 562,
+   "ratio": 0.15,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_73",
+   "etabs_id": "C458",
+   "confidence": "HIGH",
+   "dist": 452,
+   "ratio": 0.14,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_74",
+   "etabs_id": "C456",
+   "confidence": "HIGH",
+   "dist": 381,
+   "ratio": 0.12,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_75",
+   "etabs_id": "C454",
+   "confidence": "HIGH",
+   "dist": 363,
+   "ratio": 0.12,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_76",
+   "etabs_id": "C460",
+   "confidence": "HIGH",
+   "dist": 517,
+   "ratio": 0.16,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_77",
+   "etabs_id": "C444",
+   "confidence": "HIGH",
+   "dist": 569,
+   "ratio": 0.17,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_78",
+   "etabs_id": "C443",
+   "confidence": "HIGH",
+   "dist": 565,
+   "ratio": 0.12,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_79",
+   "etabs_id": "C457",
+   "confidence": "HIGH",
+   "dist": 530,
+   "ratio": 0.14,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_80",
+   "etabs_id": "C455",
+   "confidence": "HIGH",
+   "dist": 462,
+   "ratio": 0.12,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_81",
+   "etabs_id": "C453",
+   "confidence": "HIGH",
+   "dist": 555,
+   "ratio": 0.16,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_82",
+   "etabs_id": "C447",
+   "confidence": "HIGH",
+   "dist": 381,
+   "ratio": 0.08,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_83",
+   "etabs_id": "C445",
+   "confidence": "HIGH",
+   "dist": 587,
+   "ratio": 0.12,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_84",
+   "etabs_id": "C446",
+   "confidence": "HIGH",
+   "dist": 615,
+   "ratio": 0.18,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_85",
+   "etabs_id": "C449",
+   "confidence": "MED",
+   "dist": 761,
+   "ratio": 0.28,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_86",
+   "etabs_id": "C450",
+   "confidence": "MED",
+   "dist": 668,
+   "ratio": 0.26,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_87",
+   "etabs_id": "C448",
+   "confidence": "MED",
+   "dist": 650,
+   "ratio": 0.23,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_88",
+   "etabs_id": "C121",
+   "confidence": "HIGH",
+   "dist": 414,
+   "ratio": 0.12,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_89",
+   "etabs_id": "C131",
+   "confidence": "HIGH",
+   "dist": 203,
+   "ratio": 0.06,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_90",
+   "etabs_id": "C78",
+   "confidence": "HIGH",
+   "dist": 61,
+   "ratio": 0.01,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_91",
+   "etabs_id": "C79",
+   "confidence": "HIGH",
+   "dist": 136,
+   "ratio": 0.03,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_92",
+   "etabs_id": "C76",
+   "confidence": "HIGH",
+   "dist": 134,
+   "ratio": 0.04,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_93",
+   "etabs_id": "C74",
+   "confidence": "HIGH",
+   "dist": 132,
+   "ratio": 0.04,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_94",
+   "etabs_id": "C72",
+   "confidence": "HIGH",
+   "dist": 134,
+   "ratio": 0.04,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_95",
+   "etabs_id": "C70",
+   "confidence": "HIGH",
+   "dist": 137,
+   "ratio": 0.03,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_96",
+   "etabs_id": "C68",
+   "confidence": "HIGH",
+   "dist": 141,
+   "ratio": 0.04,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_97",
+   "etabs_id": "C67",
+   "confidence": "HIGH",
+   "dist": 231,
+   "ratio": 0.06,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_98",
+   "etabs_id": "C66",
+   "confidence": "HIGH",
+   "dist": 145,
+   "ratio": 0.04,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  },
+  {
+   "gfc_id": "GFC_99",
+   "etabs_id": "C132",
+   "confidence": "HIGH",
+   "dist": 291,
+   "ratio": 0.07,
+   "mutual": false,
+   "posdev": false,
+   "pier": null
+  }
+ ],
+ "unmatched_etabs": [
+  "C124",
+  "C125",
+  "C126",
+  "C127"
+ ]
+}
