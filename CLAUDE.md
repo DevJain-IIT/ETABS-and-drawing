@@ -132,6 +132,12 @@ The `VecLayer` / `usePdfBitmap` split is critical here: geometry (beam line dete
 
 ---
 
+## Deferred items / review later
+
+Any unfinished work, known issues, or improvements parked for a future session go in **`see-it-later.md`** at the repo root. Always check and update that file before marking a task done.
+
+---
+
 ## Key files
 
 | File | Role |

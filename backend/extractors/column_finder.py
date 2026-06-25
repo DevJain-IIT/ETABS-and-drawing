@@ -55,7 +55,7 @@ MIN_SIDE = 3.0                            # below this is clustering noise / hat
 
 # relative-geometry column gate (all RELATIVE to the sheet median -> scale-free)
 AREA_LO_FRAC = 0.25                       # a column is >= 0.25x the median box area
-AREA_HI_FRAC = 6.0                        # and <= 6x it (bigger -> lift/large block)
+AREA_HI_FRAC = 3.0                        # and <= 3x it (bigger -> lift/large block)
 SW_ASPECT = 4.0                           # aspect > this -> shear wall (kind "wall") [§0a]
 
 COLUMN_LAYER_PATTERN = re.compile(r"COL", re.I)   # matches AS-COLS, COL. HATCH, S COL. OVER…

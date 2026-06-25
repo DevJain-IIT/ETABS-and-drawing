@@ -23,6 +23,29 @@
 import type { Affine, Contract, DrawingBeam, EtabsBeam, EtabsCol, MatchOutput } from './types';
 import { applyAffine } from './geometry';
 
+// ---- V2 types (ETABS-first corridor algorithm) ----
+export type BeamStatusV2 = 'verified' | 'missing' | 'extra';
+
+export interface EtabsBeamResult {
+  etabs_id: string;
+  ea: string; eb: string;           // ETABS column IDs
+  status: 'verified' | 'missing';
+  // GFC-space corridor corners (for rendering)
+  gx1: number; gy1: number; gx2: number; gy2: number;
+}
+
+export interface DrawingBeamResult {
+  drawing_id: string;
+  a: string; b: string;             // GFC column IDs
+  status: 'verified' | 'extra';
+}
+
+export interface BeamMatchV2Output {
+  etabsBeams: EtabsBeamResult[];
+  drawingBeams: DrawingBeamResult[];
+  counts: { verified: number; missing: number; extra: number };
+}
+
 export type BeamStatus = 'matched' | 'pos_match' | 'drawing_only' | 'nocol';
 
 export interface BeamRow extends DrawingBeam {
@@ -160,6 +183,179 @@ export function runBeamMatch(contract: Contract, match: MatchOutput, affine?: Af
       drawing_only: beams.filter((b) => b.status === 'drawing_only').length,
       etabs_only: etabsOnlyEdges.length,
       nocol: beams.filter((b) => b.status === 'nocol').length,
+    },
+  };
+}
+
+// ---------------------------------------------------------------------------
+// V2 — ETABS-first corridor algorithm
+//
+// ETABS is ground truth. For each ETABS beam A→B:
+//  1. Project A and B into GFC drawing space via the inverse affine.
+//  2. Build a corridor rectangle: ±PERP_TOL_GFC perpendicular to the beam,
+//     clipped between the column faces (not just the column centres).
+//  3. Check every raw drawing line segment — if its midpoint (or any endpoint)
+//     falls inside the corridor → ETABS beam is "verified".
+//  4. Any ETABS beam with no corridor hit → "missing" (primary flaw).
+//  5. Any drawing beam whose midpoint wasn't captured by any ETABS corridor
+//     → "extra" (secondary review item).
+//
+// Corridor width: PERP_TOL = 300 mm in ETABS space. We convert to GFC space
+// by dividing by the affine scale factor (approximate isotropic scale).
+// ---------------------------------------------------------------------------
+
+const PERP_TOL_MM = 300; // mm, perpendicular half-width in ETABS space
+
+// Invert a 2-D affine: given GFC→ETABS affine, return ETABS→GFC affine.
+function invertAffine(aff: Affine): Affine {
+  const det = aff.a * aff.e - aff.b * aff.d;
+  if (Math.abs(det) < 1e-12) throw new Error('Singular affine — cannot invert');
+  const ia = aff.e / det, ib = -aff.b / det;
+  const id = -aff.d / det, ie = aff.a / det;
+  return {
+    a: ia, b: ib, c: -(ia * aff.c + ib * aff.f),
+    d: id, e: ie, f: -(id * aff.c + ie * aff.f),
+  };
+}
+
+// Approximate scale factor of a GFC→ETABS affine (mm per PDF pt)
+function affineScale(aff: Affine): number {
+  return Math.sqrt(Math.abs(aff.a * aff.e - aff.b * aff.d));
+}
+
+// Signed perpendicular distance from point P to segment A→B (positive = left side)
+// and projection scalar t (0 = at A, 1 = at B).
+function segProx(px: number, py: number, ax: number, ay: number, bx: number, by: number): { perp: number; t: number } {
+  const dx = bx - ax, dy = by - ay;
+  const len2 = dx * dx + dy * dy;
+  if (len2 < 1e-12) return { perp: Math.hypot(px - ax, py - ay), t: 0 };
+  const t = ((px - ax) * dx + (py - ay) * dy) / len2;
+  return { perp: Math.hypot((px - ax) - t * dx, (py - ay) - t * dy), t };
+}
+
+export function runBeamMatchV2(
+  contract: Contract,
+  affine: Affine,       // GFC → ETABS
+  match: MatchOutput,
+): BeamMatchV2Output {
+  const inv = invertAffine(affine);
+  const scale = affineScale(affine); // mm per GFC pt (approx)
+  // Convert PERP_TOL from mm to GFC pts
+  const perpTolGfc = PERP_TOL_MM / scale;
+
+  // Build ETABS column lookup
+  const ecById = new Map(contract.etabs_cols.map((c) => [c.id, c]));
+
+  // Build a map: ETABS col pair → ETABS beam
+  // Snap ETABS beam endpoints to nearest column (same 60mm snap as V1)
+  const snap60 = (x: number, y: number): string | null => {
+    let best: string | null = null, bd = 60;
+    for (const c of contract.etabs_cols) {
+      const d = Math.hypot(x - c.x, y - c.y);
+      if (d < bd) { bd = d; best = c.id; }
+    }
+    return best;
+  };
+
+  interface EtabsEdge { id: string; ea: string; eb: string; x1: number; y1: number; x2: number; y2: number; }
+  const etabsEdges: EtabsEdge[] = [];
+  for (const b of contract.etabs_beams) {
+    const ea = snap60(b.x1, b.y1), eb = snap60(b.x2, b.y2);
+    if (ea && eb && ea !== eb) etabsEdges.push({ id: b.id, ea, eb, x1: b.x1, y1: b.y1, x2: b.x2, y2: b.y2 });
+  }
+
+  // Deduplicate by column pair (keep first)
+  const seen = new Set<string>();
+  const uniqueEdges = etabsEdges.filter((e) => {
+    const k = [e.ea, e.eb].sort().join('|');
+    if (seen.has(k)) return false;
+    seen.add(k); return true;
+  });
+
+  // Collect all drawing line segments from raw_lines (backend-extracted beam lines in GFC space)
+  // Fall back to drawing_beams midpoints if raw_lines unavailable.
+  // raw_lines are in GFC (PDF) space already.
+  const rawLines: { x1: number; y1: number; x2: number; y2: number }[] =
+    (contract.schedule?.raw_lines as typeof rawLines | undefined) ?? [];
+
+  // GFC column position lookup
+  const gfcById = new Map(contract.gfc_cols.map((c) => [c.id, c]));
+  // Drawing beam midpoints (GFC space) as fallback line segments
+  const drawingSegs = contract.drawing_beams.map((db) => {
+    const ca = gfcById.get(db.a), cb = gfcById.get(db.b);
+    if (!ca || !cb) return null;
+    return { x1: ca.cx, y1: ca.cy, x2: cb.cx, y2: cb.cy, id: db.id };
+  }).filter(Boolean) as { x1: number; y1: number; x2: number; y2: number; id: string }[];
+
+  const segments = rawLines.length > 0
+    ? rawLines.map((l, i) => ({ ...l, id: `raw_${i}` }))
+    : drawingSegs;
+
+  // For each ETABS beam, project into GFC space and check corridor
+  const verifiedDrawingIds = new Set<string>();
+  const etabsResults: EtabsBeamResult[] = [];
+
+  for (const edge of uniqueEdges) {
+    // Project ETABS column centres into GFC space
+    const [gx1, gy1] = applyAffine(inv, edge.x1, edge.y1);
+    const [gx2, gy2] = applyAffine(inv, edge.x2, edge.y2);
+
+    // Column face clipping: shrink corridor ends inward by half the column B/D
+    // along the beam axis to avoid including segments that just touch a column box.
+    const ca = ecById.get(edge.ea), cb = ecById.get(edge.eb);
+    const len = Math.hypot(gx2 - gx1, gy2 - gy1);
+    // Inward clip as fraction of beam length (column half-dimension / beam length)
+    const clipA = ca ? (Math.max(ca.B, ca.D) / 2) / scale / Math.max(len, 1) : 0;
+    const clipB = cb ? (Math.max(cb.B, cb.D) / 2) / scale / Math.max(len, 1) : 0;
+    // t range for corridor: [clipA, 1-clipB]
+    const tMin = clipA, tMax = 1 - clipB;
+
+    let verified = false;
+    for (const seg of segments) {
+      // Check both endpoints and midpoint of the drawing segment
+      const pts = [
+        { x: seg.x1, y: seg.y1 },
+        { x: (seg.x1 + seg.x2) / 2, y: (seg.y1 + seg.y2) / 2 },
+        { x: seg.x2, y: seg.y2 },
+      ];
+      for (const pt of pts) {
+        const { perp, t } = segProx(pt.x, pt.y, gx1, gy1, gx2, gy2);
+        if (perp <= perpTolGfc && t >= tMin && t <= tMax) {
+          verified = true;
+          verifiedDrawingIds.add(seg.id);
+          break;
+        }
+      }
+      if (verified) break;
+    }
+
+    etabsResults.push({
+      etabs_id: edge.id,
+      ea: edge.ea, eb: edge.eb,
+      status: verified ? 'verified' : 'missing',
+      gx1, gy1, gx2, gy2,
+    });
+  }
+
+  // Drawing beams not captured by any ETABS corridor → "extra"
+  const drawingResults: DrawingBeamResult[] = drawingSegs.map((seg) => ({
+    drawing_id: seg.id,
+    a: contract.drawing_beams.find((db) => {
+      const ca = gfcById.get(db.a); return ca && Math.hypot(ca.cx - seg.x1, ca.cy - seg.y1) < 1;
+    })?.a ?? '',
+    b: contract.drawing_beams.find((db) => {
+      const cb = gfcById.get(db.b); return cb && Math.hypot(cb.cx - seg.x2, cb.cy - seg.y2) < 1;
+    })?.b ?? '',
+    status: verifiedDrawingIds.has(seg.id) ? 'verified' : 'extra',
+  }));
+
+  return {
+    etabsBeams: etabsResults,
+    drawingBeams: drawingResults,
+    counts: {
+      verified: etabsResults.filter((e) => e.status === 'verified').length,
+      missing: etabsResults.filter((e) => e.status === 'missing').length,
+      extra: drawingResults.filter((d) => d.status === 'extra').length,
     },
   };
 }

@@ -5,7 +5,6 @@ import Link from 'next/link';
 import { T } from '@/lib/design';
 import type { Contract, GfcCol, MatchOutput, Affine } from '@/lib/engine/types';
 import { runColumnMatch, solveAffine, icpRefine, linAnisotropy } from '@/lib/engine';
-import { runBeamMatch, type BeamMatchOutput } from '@/lib/engine/beams';
 import {
   renderGFC, renderETABS, TIER_COLORS, newView, fitCloud, zoomAt,
   canvasToGfc, canvasToEtabs, type View,
@@ -20,10 +19,9 @@ export default function MapperPage({ params }: { params: { id: string } }) {
   const projectId = params.id;
   const [contract, setContract] = React.useState<Contract | null>(null);
   const [match, setMatch] = React.useState<MatchOutput | null>(null);
-  const [beamMatch, setBeamMatch] = React.useState<BeamMatchOutput | null>(null);
+  const [overrides, setOverrides] = React.useState<Record<string, string | null>>({});
   const [affine, setAffine] = React.useState<Affine | null>(null);
   const [selected, setSelected] = React.useState<string | null>(null);
-  const [showBeams, setShowBeams] = React.useState(true);
   const [err, setErr] = React.useState<string | null>(null);
 
   // calibration (Registration B): 3 GFC control points + 3 ETABS matches
@@ -79,7 +77,7 @@ export default function MapperPage({ params }: { params: { id: string } }) {
   const draw = React.useCallback(() => {
     if (!contract) return;
     const g = gfcRef.current, e = etabsRef.current;
-    const bm = showBeams ? beamMatch : null;
+    const bm = null;
     const v = gfcView.current;
     const cmarks = contract.gfc_cmark ?? {};
     if (g) {
@@ -127,7 +125,7 @@ export default function MapperPage({ params }: { params: { id: string } }) {
     if (e) renderETABS(e.getContext('2d')!, etabsView.current, contract, match, CW, CH,
       { selected, beamMatch: bm, affine, calibPts: etabsPts,
         ghosts: affine ? contract.gfc_cols : undefined });
-  }, [contract, match, beamMatch, showBeams, selected, gfcPts, etabsPts, affine, pdfBitmap, floorAlpha]);
+  }, [contract, match, selected, gfcPts, etabsPts, affine, pdfBitmap, floorAlpha]);
   React.useEffect(() => { draw(); });
 
   // ---- Apply calibration: 3-pt affine seed -> ICP refine ----
@@ -148,16 +146,33 @@ export default function MapperPage({ params }: { params: { id: string } }) {
       GFC_COLS: contract.gfc_cols, ETABS_COLS: contract.etabs_cols, ETABS_WALLS: contract.etabs_walls,
     }, 1e9, affine);   // pass the calibrated affine so the engine uses it (no re-seed)
     setMatch(out);
-    const bm = runBeamMatch(contract, out, affine);
-    setBeamMatch(bm);
     say(`Engine matched columns: ${out.counts.HIGH} high, ${out.counts.MED} med, ${out.counts.LOW} review, ${out.counts.WALL} reclassified-as-wall, ${out.counts.UNMATCHED_ETABS} modeled-not-drawn.`);
-    say(`Beams: ${bm.counts.matched} topological + ${bm.counts.pos_match} positional = ${bm.counts.matched + bm.counts.pos_match} matched, ${bm.counts.drawing_only} drawn-not-modeled, ${bm.counts.etabs_only} modeled-not-drawn.`);
   };
 
   const resetCalib = () => {
-    setGfcPts([]); setEtabsPts([]); setAffine(null); setMatch(null); setBeamMatch(null);
+    setGfcPts([]); setEtabsPts([]); setAffine(null); setMatch(null); setOverrides({});
     setSelected(null); setInspectedId(null); setInspectedSide('etabs');
     say('Calibration reset. Click 3 control points on the GFC drawing again.');
+  };
+
+  // HITL: reassign a GFC column to a different ETABS column (or clear it)
+  const overrideMatch = (gfcId: string | null, newEtabsId: string | null) => {
+    if (!match || !gfcId) return;
+    const updated = match.matchResult.map((r) => {
+      // Clear whatever currently holds newEtabsId (so no two GFC share the same ETABS)
+      if (newEtabsId && r.etabs_id === newEtabsId && r.gfc_id !== gfcId) {
+        return { ...r, etabs_id: null, matched: false, confidence: 'LOW' as const };
+      }
+      if (r.gfc_id === gfcId) {
+        return { ...r, etabs_id: newEtabsId, matched: !!newEtabsId, confidence: newEtabsId ? 'HIGH' as const : 'LOW' as const, dist: 0 };
+      }
+      return r;
+    });
+    setMatch({ ...match, matchResult: updated });
+    setOverrides((prev) => ({ ...prev, [gfcId]: newEtabsId }));
+    say(`Override: ${gfcId} → ${newEtabsId ?? '(unmatched)'}`);
+    // Persist to backend (non-fatal)
+    api.saveResults(projectId, { step: 'hitl_overrides', overrides: { ...overrides, [gfcId]: newEtabsId } }).catch(() => {});
   };
 
   // ---- canvas pointer handlers (zoom / pan / pick) ----
@@ -262,7 +277,6 @@ export default function MapperPage({ params }: { params: { id: string } }) {
         </div>
 
         <Legend />
-        {beamMatch && <BeamStats bm={beamMatch} showBeams={showBeams} onToggle={() => { setShowBeams((s) => !s); }} />}
         {match && <ReviewQueue match={match} selected={selected} onSelect={(id) => { setSelected(id); setInspectedId(id); setInspectedSide('etabs'); }} />}
 
       </div>
@@ -274,6 +288,7 @@ export default function MapperPage({ params }: { params: { id: string } }) {
           contract={contract}
           match={match}
           log={log}
+          onOverride={overrideMatch}
         />
       )}
     </div>
@@ -396,69 +411,156 @@ function Pane({ title, subtitle, hint, alphaControl, children }: {
 }
 
 function Legend() {
-  const colItems = [['HIGH', TIER_COLORS.HIGH], ['MED', TIER_COLORS.MED], ['LOW / review', TIER_COLORS.LOW],
-    ['wall', TIER_COLORS.WALL], ['modeled-not-drawn', TIER_COLORS.UNMATCHED_ETABS]] as const;
-  const beamItems: [string, string][] = [
-    ['beam matched', '#0E9F6E'], ['beam corridor', '#06B6D4'],
-    ['beam flaw', '#E11D48'], ['no-col', 'rgba(100,116,139,0.6)'],
+  const colItems: [string, string][] = [
+    ['HIGH', TIER_COLORS.HIGH], ['MED', TIER_COLORS.MED], ['LOW / review', TIER_COLORS.LOW],
+    ['wall', TIER_COLORS.WALL], ['modeled-not-drawn', TIER_COLORS.UNMATCHED_ETABS],
   ];
   return (
     <div style={{ display: 'flex', gap: 18, marginTop: 12, fontFamily: T.mono, fontSize: 11.5, color: T.muted, flexWrap: 'wrap' }}>
-      {colItems.map(([l, c]) => <span key={l} style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-        <span style={{ width: 11, height: 11, borderRadius: 2, background: c }} /> {l}</span>)}
-      <span style={{ color: T.border }}>·</span>
-      {beamItems.map(([l, c]) => <span key={l} style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-        <span style={{ display: 'inline-block', width: 18, height: 3, borderRadius: 2, background: c }} /> {l}</span>)}
+      {colItems.map(([l, c]) => (
+        <span key={l} style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+          <span style={{ width: 11, height: 11, borderRadius: 2, background: c }} /> {l}
+        </span>
+      ))}
     </div>
   );
 }
 
-function BeamStats({ bm, showBeams, onToggle }: { bm: BeamMatchOutput; showBeams: boolean; onToggle: () => void }) {
-  return <div style={{ display: 'flex', alignItems: 'center', gap: 18, marginTop: 12, flexWrap: 'wrap' }}>
-    <button onClick={onToggle} style={{ padding: '6px 12px', borderRadius: 8, fontFamily: T.mono, fontSize: 12,
-      cursor: 'pointer', border: `1px solid ${T.border}`, background: showBeams ? T.cyan : T.panel, color: showBeams ? T.navy : T.muted }}>
-      {showBeams ? 'hide beams' : 'show beams'}</button>
-    <span style={{ fontFamily: T.mono, fontSize: 12.5, color: T.muted, display: 'flex', gap: 16 }}>
-      <span><span style={{ color: '#0E9F6E' }}>■</span> <b style={{ color: T.ink }}>{bm.counts.matched}</b> matched</span>
-      {bm.counts.pos_match > 0 && (
-        <span><span style={{ color: '#06B6D4' }}>■</span> <b style={{ color: T.ink }}>{bm.counts.pos_match}</b> corridor match</span>
-      )}
-      <span><span style={{ color: '#E11D48' }}>■</span> <b style={{ color: T.ink }}>{bm.counts.drawing_only}</b> drawn-not-modeled</span>
-      <span><span style={{ color: '#E08A00' }}>■</span> <b style={{ color: T.ink }}>{bm.counts.etabs_only}</b> modeled-not-drawn</span>
-    </span>
-  </div>;
-}
 
 function ReviewQueue({ match, selected, onSelect }: { match: MatchOutput; selected: string | null; onSelect: (id: string) => void }) {
-  const queue = match.matchResult.filter((m) => m.confidence === 'LOW' || m.confidence === 'WALL' || m.confidence === 'UNMATCHED_ETABS');
-  return <div style={{ marginTop: 24 }}>
-    <div style={{ fontFamily: T.serif, fontSize: 18, marginBottom: 12 }}>Review queue <span style={{ fontFamily: T.mono, fontSize: 13, color: T.muted }}>({queue.length})</span></div>
-    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 12 }}>
-      {queue.map((m, i) => {
-        const color = (TIER_COLORS as Record<string, string>)[m.confidence] || T.muted;
-        const label = m.confidence === 'WALL' ? 'Reclassified as wall' : m.confidence === 'UNMATCHED_ETABS' ? 'Modeled, not drawn' : 'Needs review';
-        return <button key={i} onClick={() => m.gfc_id && onSelect(m.gfc_id)} style={{ textAlign: 'left', background: T.panel,
-          borderTop: `1px solid ${selected === m.gfc_id ? color : T.border}`, borderRight: `1px solid ${selected === m.gfc_id ? color : T.border}`,
-          borderBottom: `1px solid ${selected === m.gfc_id ? color : T.border}`, borderLeft: `3px solid ${color}`,
-          borderRadius: 10, padding: '11px 13px', cursor: 'pointer' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <span style={{ fontFamily: T.mono, fontSize: 12.5, fontWeight: 600 }}>{m.gfc_id || '—'}{m.etabs_id ? ` ↔ ${m.etabs_id}` : ''}</span>
-            <span style={{ fontFamily: T.mono, fontSize: 11, color }}>{m.confidence}</span>
+  const [tab, setTab] = React.useState<'low' | 'unmatched' | 'overridden'>('low');
+
+  const lowConf = match.matchResult.filter((m) => m.confidence === 'LOW' || m.confidence === 'WALL');
+  const unmatched = match.matchResult.filter((m) => m.confidence === 'UNMATCHED_ETABS');
+  const overridden = match.matchResult.filter((m) => m.dist === 0 && m.matched);
+
+  const tabs: { key: typeof tab; label: string; items: typeof lowConf; color: string }[] = [
+    { key: 'low',       label: `Low confidence (${lowConf.length})`,    items: lowConf,    color: TIER_COLORS.LOW },
+    { key: 'unmatched', label: `Not in drawing (${unmatched.length})`,  items: unmatched,  color: TIER_COLORS.UNMATCHED_ETABS },
+    { key: 'overridden',label: `Overridden (${overridden.length})`,     items: overridden, color: '#0E9F6E' },
+  ];
+  const active = tabs.find((t) => t.key === tab)!;
+
+  return (
+    <div style={{ marginTop: 24 }}>
+      <div style={{ fontFamily: T.serif, fontSize: 18, marginBottom: 12 }}>Column match review</div>
+
+      {/* Tab bar */}
+      <div style={{ display: 'flex', gap: 6, marginBottom: 14, flexWrap: 'wrap' }}>
+        {tabs.map((t) => (
+          <button key={t.key} onClick={() => setTab(t.key)} style={{
+            padding: '6px 14px', borderRadius: 8, fontFamily: T.mono, fontSize: 12, cursor: 'pointer',
+            border: `1.5px solid ${tab === t.key ? t.color : T.border}`,
+            background: tab === t.key ? `${t.color}18` : T.panel,
+            color: tab === t.key ? t.color : T.muted, fontWeight: tab === t.key ? 700 : 400,
+          }}>{t.label}</button>
+        ))}
+      </div>
+
+      {/* Cards */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 12 }}>
+        {active.items.length === 0 && (
+          <div style={{ fontFamily: T.mono, fontSize: 12.5, color: T.muted, gridColumn: '1/-1', padding: '16px 0' }}>
+            {tab === 'overridden' ? 'No manual overrides yet.' : 'None — all good here.'}
           </div>
-          <div style={{ fontSize: 12.5, color: T.muted, marginTop: 5 }}>{label}{m.pier ? ` · on ${m.pier}` : ''}{m.dist != null ? ` · ${m.dist}mm` : ''}</div>
-        </button>;
-      })}
+        )}
+        {active.items.map((m, i) => {
+          const color = active.color;
+          const label = m.confidence === 'WALL' ? 'Reclassified as wall'
+            : m.confidence === 'UNMATCHED_ETABS' ? 'Modeled, not in drawing'
+            : m.dist === 0 && m.matched ? 'Manually overridden'
+            : 'Needs review';
+          const clickId = m.gfc_id ?? m.etabs_id;
+          return (
+            <button key={i} onClick={() => clickId && onSelect(clickId)} style={{
+              textAlign: 'left', background: T.panel, cursor: 'pointer', borderRadius: 10, padding: '11px 13px',
+              borderTop: `1px solid ${selected === clickId ? color : T.border}`,
+              borderRight: `1px solid ${selected === clickId ? color : T.border}`,
+              borderBottom: `1px solid ${selected === clickId ? color : T.border}`,
+              borderLeft: `3px solid ${color}`,
+            }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <span style={{ fontFamily: T.mono, fontSize: 12.5, fontWeight: 600 }}>
+                  {m.gfc_id || '—'}{m.etabs_id ? ` ↔ ${m.etabs_id}` : ''}
+                </span>
+                <span style={{ fontFamily: T.mono, fontSize: 11, color }}>{m.confidence}</span>
+              </div>
+              <div style={{ fontSize: 12.5, color: T.muted, marginTop: 5 }}>
+                {label}{m.pier ? ` · on ${m.pier}` : ''}{m.dist != null && m.dist > 0 ? ` · ${m.dist}mm` : ''}
+              </div>
+            </button>
+          );
+        })}
+      </div>
     </div>
-  </div>;
+  );
 }
 
 
-function InspectorPanel({ colId, side, contract, match, log }: {
+// Dropdown to reassign a GFC↔ETABS column match (HITL correction)
+function ReassignDropdown({ gfcId, currentEtabsId, etabsCols, onOverride, gfcCols, cmarks, etabsMode }: {
+  gfcId: string | null;
+  currentEtabsId: string | null;
+  etabsCols: import('@/lib/engine/types').EtabsCol[];
+  onOverride: (gfcId: string | null, newEtabsId: string | null) => void;
+  gfcCols?: import('@/lib/engine/types').GfcCol[];
+  cmarks?: Record<string, string>;
+  etabsMode?: boolean;
+}) {
+  const selectStyle: React.CSSProperties = {
+    width: '100%', padding: '7px 10px', borderRadius: 7, marginTop: 6,
+    background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.15)',
+    color: '#fff', fontFamily: 'monospace', fontSize: 12, cursor: 'pointer',
+  };
+
+  if (etabsMode && gfcCols) {
+    // On ETABS side: pick which GFC column to pair with this ETABS column
+    return (
+      <div style={{ marginTop: 18, paddingTop: 14, borderTop: '1px solid rgba(255,255,255,0.08)' }}>
+        <div style={{ fontFamily: 'monospace', fontSize: 11, color: 'rgba(255,255,255,0.35)', letterSpacing: '0.08em', marginBottom: 4 }}>
+          REASSIGN DRAWING COLUMN
+        </div>
+        <select style={selectStyle} value={gfcId ?? ''} onChange={(e) => {
+          const val = e.target.value;
+          onOverride(val || null, null);
+        }}>
+          <option value="">— unmatched —</option>
+          {gfcCols.map((c) => (
+            <option key={c.id} value={c.id}>
+              {cmarks?.[c.id] ? `${cmarks[c.id]} (${c.id})` : c.id}
+            </option>
+          ))}
+        </select>
+      </div>
+    );
+  }
+
+  // GFC side: pick which ETABS column to pair with this GFC column
+  return (
+    <div style={{ marginTop: 18, paddingTop: 14, borderTop: '1px solid rgba(255,255,255,0.08)' }}>
+      <div style={{ fontFamily: 'monospace', fontSize: 11, color: 'rgba(255,255,255,0.35)', letterSpacing: '0.08em', marginBottom: 4 }}>
+        REASSIGN MODEL COLUMN
+      </div>
+      <select style={selectStyle} value={currentEtabsId ?? ''} onChange={(e) => {
+        const val = e.target.value;
+        if (gfcId) onOverride(gfcId, val || null);
+      }}>
+        <option value="">— unmatched —</option>
+        {etabsCols.map((c) => (
+          <option key={c.id} value={c.id}>{c.id}{c.sec ? ` · ${c.sec}` : ''}</option>
+        ))}
+      </select>
+    </div>
+  );
+}
+
+function InspectorPanel({ colId, side, contract, match, log, onOverride }: {
   colId: string | null;
   side: 'gfc' | 'etabs';
   contract: Contract;
   match: MatchOutput | null;
   log: string[];
+  onOverride: (gfcId: string | null, newEtabsId: string | null) => void;
 }) {
   const logEndRef = React.useRef<HTMLDivElement>(null);
   React.useEffect(() => {
@@ -553,14 +655,14 @@ function InspectorPanel({ colId, side, contract, match, log }: {
                 Run "Refine &amp; match" to see model pairing.
               </div>
             )}
-            <div style={{ margin: '20px 0 0', padding: '12px 14px', borderRadius: 8,
-              border: `1px dashed ${T.borderD}`, background: 'rgba(255,255,255,0.03)' }}>
-              <div style={{ fontFamily: T.mono, fontSize: 11, color: 'rgba(255,255,255,0.3)',
-                letterSpacing: '0.08em' }}>COLUMN SCHEDULE</div>
-              <div style={{ fontFamily: T.mono, fontSize: 12, color: 'rgba(255,255,255,0.2)', marginTop: 6 }}>
-                Coming soon — schedule data will appear here.
-              </div>
-            </div>
+            {match && (
+              <ReassignDropdown
+                gfcId={colId}
+                currentEtabsId={etabsId}
+                etabsCols={contract.etabs_cols}
+                onOverride={onOverride}
+              />
+            )}
           </div>
         </div>
         {logFooter}
@@ -613,6 +715,21 @@ function InspectorPanel({ colId, side, contract, match, log }: {
                 <div style={{ marginTop: 16, fontFamily: T.mono, fontSize: 12, color: CONF_COLOR.UNMATCHED_ETABS }}>
                   No drawing match — modeled but not drawn
                 </div>
+              )}
+              {match && col && (
+                <ReassignDropdown
+                  gfcId={gfcId}
+                  currentEtabsId={col.id}
+                  etabsCols={contract.etabs_cols}
+                  onOverride={(gfcId2, _) => {
+                    // On ETABS side: user picks GFC column to pair with this ETABS column
+                    // We show a GFC picker instead — but reuse same override mechanism
+                    onOverride(gfcId2 ?? '', col.id);
+                  }}
+                  gfcCols={contract.gfc_cols}
+                  cmarks={contract.gfc_cmark ?? {}}
+                  etabsMode
+                />
               )}
             </>
           )}
